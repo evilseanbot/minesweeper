@@ -1,4 +1,8 @@
-.square {
+body {
+    background-color: black;
+}
+
+div.square {
     border: 1px solid black;
     display: inline-block;
     font-family: courier;
@@ -7,56 +11,54 @@
     z-index: 1;
 }
 
-.open {
-	background-color: #DDDDDD;
+div.open {
+	background-color: #EEEEEE;
 }
 
-.closed {
+div.closed {
     background-color: #0000FF;
 	background: -prefix-linear-gradient(top, blue, cyan); 
 	background: linear-gradient(to bottom, blue, cyan);                
 }
 
-.topLeftCorner {
+div.square.topLeftCorner {
     border-top-left-radius: 50%;
 }
 
-.topRightCorner {
+div.square.topRightCorner {
     border-top-right-radius: 50%;
 }
 
-.bottomLeftCorner {
+div.square.bottomLeftCorner {
     border-bottom-left-radius: 50%;
 }
 
-.bottomRightCorner {
+div.square.bottomRightCorner {
     border-bottom-right-radius: 50%;
 }
 
-.warning {
+div.square.warning {
     background-color: red;
 }
 
-.button {
+div.button {
     display: inline-block;
-    padding: 0%;
-    margin: 0%;
     border: 1px solid black;
 }
 
-.button:not(.pressedButton) {
+div.button:not(.pressedButton) {
     background-color: #dddddd;                                
 }
-.button:hover:not(.pressedButton) {
+div.button:hover:not(.pressedButton) {
     background-color: white;
 }
 
-.pressedButton {
+div.button.pressedButton {
     background-color: black;
     color: white;
 }
 
-#potentialGameSpace {
+div#potentialGameSpace {
     width: 95%;
     height: 85%;
     min-width: 400px;
@@ -64,13 +66,11 @@
     position: fixed;
 }
 
-#mineSweeperBoard {
+div#mineSweeperBoard {
     margin: auto;
-    //bottom: 0;
-    //position: relative;
 }
 
-#controls {
+div#controls {
     min-height: 46px;        
     min-width: 400px;        
     height: 10%;
@@ -82,36 +82,23 @@
     top: 0;
 }
 
-#spacerForControls {
-    height: 15%;
-    min-height: 50px;
-}
-
-body {
-    background-color: black;
-}
 
 img.boardImg {
     height: 90%;
     position: absolute;
 }
 
-img.flag {
+img.boardImg.flag {
     left: 30%;
     top: 5%;
 }
 
-img.mine {
+img.boardImg.mine {
     left: 5%;
     top: 5%;
 }
 
-img.squareImg {
-    left: 5%;
-    top: 5%;
-}
-
-#newGameSettings {
+div#newGameSettings {
     position: fixed;
     min-width: 300px;
     min-height: 300px;
@@ -124,21 +111,4 @@ img.squareImg {
     z-index: 2;
     top: 25%;
     left: 25%;
-}
-
-.iconButton {
-    height: 90%;
-    min-height: 40px;
-    position: relative;
-}
-
-#fullHeightContainer {
-    position: relative;
-    margin: 0px;    
-    margin-bottom: 0px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border: 1px solid green;
 }

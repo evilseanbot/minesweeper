@@ -1,21 +1,19 @@
-var MSBoard = {};
-var gameOver = false;
-var startMenuOn = true;
-var cheating = false;
 
+// Returns an object that contains 4 properties: startX, startY, endX, endY. They describe boundaries for a box around the squares that are adjacent to the square at x, y, including diagnols.
 function getNearbySquares(x, y) {
     nearbySquares = {};
     nearbySquares.startX = Math.max(0, x-1)
-    nearbySquares.endX = Math.min(MSBoard.width-1, x+1);
+    nearbySquares.endX = Math.min(MSBoard.columns-1, x+1);
     nearbySquares.startY = Math.max(0, y-1);
-    nearbySquares.endY = Math.min(MSBoard.height-1, y+1);
+    nearbySquares.endY = Math.min(MSBoard.rows-1, y+1);
     return nearbySquares;
 }
 
+// Modifes the MSBoard object by recording how many mines are adjacent to every square. This is used for display purposes.
 function setNearbyMines() {
     // For every square on the board:
-    for (var x = 0; x < MSBoard.width; x++) {
-    	for (var y = 0; y < MSBoard.height; y++) {
+    for (var x = 0; x < MSBoard.columns; x++) {
+    	for (var y = 0; y < MSBoard.rows; y++) {
 
     		var ns = getNearbySquares(x, y);
             var nearbyMines = 0;
@@ -34,6 +32,7 @@ function setNearbyMines() {
 
 }
 
+// These two functions get the X and Y Coordinates of a square from its Id, which is in the format 'X-Y'
 function getX(id) {
     splitIndex = id.indexOf("-");
     xString = id.substring(0, splitIndex);
@@ -46,20 +45,24 @@ function getY(id) {
 	return parseInt(yString);
 }
 
+// Changes the model of the board so that a square at x, y is flagged.
 function flagSquare(x, y) {
     square = MSBoard.squares[x][y];
     square.flag = !square.flag;
 }
 
+// Operates the main activity of the game, opening squares up.
 function openSquare(x, y) {
     square = MSBoard.squares[x][y];
 	square.open = true;
 
+
+    // If the square a player opened is a mine, they lose.
     if (square.mine) {
         gameOver = true;
     }
 
-    // Checks to see if the square has no nearby mines. If so, it will open all nearby squares.
+    // Checks to see if the square has no nearby mines. If so, it will open all nearby squares. (Because they are known to be safe.)
 	if (square.nearbyMines == 0) {
 	    var ns = getNearbySquares(x, y);
 	    for (var yToOpen = ns.startY; yToOpen <= ns.endY; yToOpen++) {
@@ -74,29 +77,39 @@ function openSquare(x, y) {
     return;
 }
 
+// Updates the appearance of squares and the start game menu based on the model.
 function updateView() {
-    for (var x = 0; x < MSBoard.width; x++) {
-        for (var y = 0; y < MSBoard.height; y++) {
+    // For every square on the board.
+    console.log(MSBoard.rows);
+
+    for (var x = 0; x < MSBoard.columns; x++) {
+        for (var y = 0; y < MSBoard.rows; y++) {
             squareId = "#" + x + "-" + y;
+            // Removes the dynamic classes from the squares before adding appropiate ones back to it.
             $(squareId).removeClass("closed open flagged warning");
 
             square = MSBoard.squares[x][y];
 
-            if (square.open) {
+            // These questions determine how a square should appear.
+            // If no other text is put into a square, a &nbsp; is inserted because otherwise it disturbs the grid.
+            // If a square is open, it should be themed as so and also display the number of nearby mines.
+            if (square.open && !square.mine) {
                 $(squareId).addClass("open");
                 $(squareId).html(square.nearbyMines);
-            } else {
-                $(squareId).addClass("closed");                
-            }
-
-            if (square.flag && !square.open) {
+            } 
+            // Flags are displayed only if the square is still closed.
+            else if (square.flag && !square.open) {
+                $(squareId).addClass("closed");
                 $(squareId).html("<img src='redFlag.png' class='boardImg flag' />&nbsp;")
-            } else if (square.mine && (square.open || cheating)) {
+            } 
+            // Mines are displayed either if they're open (Either from opening one and losing or during validating) or while the cheat control is pressed.
+            else if (square.mine && (square.open || cheating)) {
                 $(squareId).addClass("warning");
                 $(squareId).html("<img src='mine.png' class='boardImg mine' />&nbsp;")
-            } else if ( square.open && !square.mine ) {
-                $(squareId).html(square.nearbyMines)                
-            } else {
+            } 
+            // The HTML is set to a blank space in case there is nothing else to put in the space. 
+            else if (!square.open && !square.flag) {
+                $(squareId).addClass("closed");                
                 $(squareId).html("&nbsp;")
             }
 
@@ -111,11 +124,12 @@ function updateView() {
 
 }
 
+// Creates the visual presentation of the board, and also adds listeners to the elements added.
 function createBoardView() {
 	var boardHTML = "";
-	for (var y = 0; y < MSBoard.height; y++) {
+	for (var y = 0; y < MSBoard.rows; y++) {
 		boardHTML += "<div>";
-    	for (var x = 0; x < MSBoard.width; x++) {
+    	for (var x = 0; x < MSBoard.columns; x++) {
             boardHTML += "<div class='square' id='" + x +"-" + y +"'></div>";    		    	            			
     		
     	}
@@ -125,19 +139,12 @@ function createBoardView() {
 
     updateView();
 
-    $(".square").click(function(e) {
-        console.log("clicked on!")
-    });
-
-
     $(".square").on('mousedown', function(e) {
-        console.log("clicked on!")
-
-
         if (!gameOver) {
             x = getX(this.id);
         	y = getY(this.id);
 
+            // Flags using the right button, which is variably mapped to button 2 or 3.
             switch (e.which) {
                 case 1:
                     openSquare(x, y);
@@ -154,29 +161,35 @@ function createBoardView() {
         }
     });
 
+
+    // Prevents the context menu from opening on any squares, or else flagging would be very awkward.
     $(".square").bind("contextmenu",function(){
        return false;
     }); 
 
+    // Adjusts the appearance of the game board to the current size settings.
     resizeGame();
 
+    // The squares that occupy the corner have corner classes added to them to create rounded edges.
     $("#0-0").addClass("topLeftCorner");
-    $("#" + (MSBoard.width-1) + "-0").addClass("topRightCorner");    
-    $("#0-" + (MSBoard.height-1)).addClass("bottomLeftCorner");
-    $("#" + (MSBoard.width-1) + "-" + (MSBoard.height-1)).addClass("bottomRightCorner");    
+    $("#" + (MSBoard.columns-1) + "-0").addClass("topRightCorner");    
+    $("#0-" + (MSBoard.rows-1)).addClass("bottomLeftCorner");
+    $("#" + (MSBoard.columns-1) + "-" + (MSBoard.rows-1)).addClass("bottomRightCorner");    
 }
 
+// Add the appropiate number of mines to the playing board model.
 function fillBoardWithMines(numOfMines) {
     var minesPlaced = 0;
 
     while (minesPlaced < numOfMines) {
-        x = (Math.random()*MSBoard.width);
-        y = (Math.random()*MSBoard.height);
+        x = (Math.random()*MSBoard.columns);
+        y = (Math.random()*MSBoard.rows);
         x = Math.floor(x);
         y = Math.floor(y);
 
         var square = MSBoard.squares[x][y];
 
+        // This algorithm is nessecary to make sure the number of mines is placed on the board by continuing when a repeated square is randomly selected.
         if (!square.mine) {
             square.mine = true;
             minesPlaced++;
@@ -184,15 +197,16 @@ function fillBoardWithMines(numOfMines) {
     }
 }
 
-function createBoardModel(boardWidth, boardHeight, numOfMines) {
+// Creates the board model.
+function createBoardModel(boardColumns, boardRows, numOfMines) {
 
-	// Creates the board model.
+    console.log("Created model for board.");
 
-    MSBoard = {height: boardHeight, width: boardWidth, squares: []};
+    MSBoard = {rows: boardRows, columns: boardColumns, squares: []};
 
-    for (var x = 0; x < boardWidth; x++) {
+    for (var x = 0; x < boardColumns; x++) {
     	MSBoard.squares[x] = [];
-        for (var y = 0; y < boardHeight; y++) {
+        for (var y = 0; y < boardColumns; y++) {
             MSBoard.squares[x][y] = {open: false, mine: false, flag: false, nearbyMines: 0}
         }
     }                
@@ -203,6 +217,7 @@ function createBoardModel(boardWidth, boardHeight, numOfMines) {
 }
 
 function resizeGame() {
+    // The size of the controls font is set by how big the control section (top 10% of the screen) stretchs out to be.
     var controlsHeight = $("#controls").height();
     var controlsFontSize = controlsHeight * 0.75;
     $("#controls").css("font-size", controlsFontSize +"px");
@@ -211,35 +226,35 @@ function resizeGame() {
     $("#newGameSettings input").css("height", controlsHeight);
     $("#newGameSettings input").css("font-size", controlsFontSize +"px");
 
-
-    //$("#fullHeightContainer").height = $("body").height();
-
-    // Make the icon buttons square:
-    $(".iconButton").css("width", $(".iconButton").css("height"));
-
-    var potentialSquareHeight = $("#potentialGameSpace").height() / MSBoard.height;
-    var potentialSquareWidth = $("#potentialGameSpace").width() / MSBoard.width;
+    // The size of the squares is based on the largest square size that can fit all of the squares on the screen.
+    var potentialSquareHeight = $("#potentialGameSpace").height() / MSBoard.rows;
+    var potentialSquareWidth = $("#potentialGameSpace").width() / MSBoard.columns;
     var potentialSpaceHeight = $("#potentialGameSpace").height();
 
     var squareSize = Math.min(potentialSquareHeight, potentialSquareWidth);
-
-    var boardWidth = squareSize * MSBoard.width;
-    var boardHeight = squareSize * MSBoard.height;
 
     $(".square").css("height", squareSize-2);
     $(".square").css("width", squareSize-2);
     $(".square").css("font-size", squareSize-2);
 
+    // The playing boards with is set by how big the squares are set to be. This is nessecary to have a centered playing field.
+    var boardWidth = squareSize * MSBoard.columns;
+    var boardHeight = squareSize * MSBoard.rows;
+
+
     $("#mineSweeperBoard").css("width", boardWidth);
     $("#mineSweeperBoard").css("height", boardHeight);
+
+    // The playing boards top margin is created to be able to see the controls and the board at the same time. While somewhat complex, this avoids some flaws of simpler solutions.
     $("#mineSweeperBoard").css("margin-top", Math.max(potentialSpaceHeight/8, 50) );
 }
 
+// Checks to see whether you have revealed all safe squares or not, and makes you win or lose the game accordingly.
 function validate() {
     var allSafeSquaresOpen = true;
 
-    for (var x = 0; x < MSBoard.width; x++) {
-        for (var y = 0; y < MSBoard.height; y++) {
+    for (var x = 0; x < MSBoard.columns; x++) {
+        for (var y = 0; y < MSBoard.rows; y++) {
             square = MSBoard.squares[x][y];
             if (!square.open && !square.mine) {
                 allSafeSquaresOpen = false
@@ -252,12 +267,14 @@ function validate() {
 
     if (allSafeSquaresOpen) {
         alert("You won!")
+        gameOver = true;
     } else {
         alert("Mines were left. You lost.")
         gameOver = true;
     }
 }
 
+// This is used on the settings on the new game menu to keep values within their designed ranges.
 function restrictInputToBounds(inputElement, min, max) {
     var value = inputElement.val();
 
@@ -271,40 +288,52 @@ function restrictInputToBounds(inputElement, min, max) {
     inputElement.val(value);
 }
 
+var MSBoard = {};
+var gameOver = false;
+var startMenuOn = true;
+var cheating = false;
+
 $(document).ready(function() {
 
+    console.log("Document is loaded!");
+
+    // Creates the model for the game.
     MSBoard = createBoardModel(8, 8, 10);
+
+    // Creates the view based on the playing board.
     createBoardView();
 
+    // Attaches a new game menu opening function to the new game control.
     $("#newGameMenu").click(function() {
         startMenuOn = true;
         updateView();
     });
 
-    $("#fullHeightContainer").click(function() {
-        console.log("background clicked!");
-    });
-
+    // When start game is pressed off the new game menu, a new board is created with the input settings.
     $("#startGame").click(function() {
         gameOver = false;
         startMenuOn = false;
-        var boardWidth = $("#boardWidth").val();
-        var boardHeight = $("#boardHeight").val(); 
+        var boardColumns = $("#boardColumns").val();
+        var boardRows = $("#boardRows").val(); 
         var numOfMines = $("#numOfMines").val();
-        MSBoard = createBoardModel(boardWidth, boardHeight, numOfMines);
+        MSBoard = createBoardModel(boardColumns, boardRows, numOfMines);
         createBoardView();        
     });
 
+
+    // When the cheat control is pressed down, the mines become visible due to a setting in updateView.
     $("#cheat").mousedown(function() {
         cheating = true;
         updateView();
     });
 
+    // When the mouse button is released from cheat control, cheat mode clears.
     $("#cheat").mouseup(function() {
         cheating = false;
         updateView();
     });
 
+    // This case is nessecary for when the mouse is removed from the cheat button before being released.
     $("#cheat").mouseout(function() {
         cheating = false;
         updateView();
@@ -312,6 +341,8 @@ $(document).ready(function() {
 
     $("#validate").click(validate); 
 
+
+    // These three listeners create the dynamic button appearance.
     $(".button").mousedown(function() {
         $("#" + this.id).removeClass("unpressedButton");
         $("#" + this.id).addClass("pressedButton");
@@ -327,20 +358,19 @@ $(document).ready(function() {
         $("#" + this.id).addClass("unpressedButton");
     });
 
-    $("#boardHeight").change(function() {
+    // These three listeners keep the input settings on the new game menu restricted to certain values.
+    $("#boardRows").change(function() {
         restrictInputToBounds($(this), 1, 20);
     });
 
-    $("#boardWidth").change(function() {
+    $("#boardColumns").change(function() {
         restrictInputToBounds($(this), 1, 20);
     });
 
     $("#numOfMines").change(function() {
-        var maximumMines = $("#boardHeight").val() * $("#boardWidth").val();
+        var maximumMines = $("#boardRows").val() * $("#boardColumns").val();
         restrictInputToBounds($(this), 1, maximumMines);
     });
-
-
 
     $( window ).resize(function() {
         resizeGame();
