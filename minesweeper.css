@@ -1,0 +1,144 @@
+.square {
+    border: 1px solid black;
+    display: inline-block;
+    font-family: courier;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.open {
+	background-color: #DDDDDD;
+}
+
+.closed {
+    background-color: #0000FF;
+	background: -prefix-linear-gradient(top, blue, cyan); 
+	background: linear-gradient(to bottom, blue, cyan);                
+}
+
+.topLeftCorner {
+    border-top-left-radius: 50%;
+}
+
+.topRightCorner {
+    border-top-right-radius: 50%;
+}
+
+.bottomLeftCorner {
+    border-bottom-left-radius: 50%;
+}
+
+.bottomRightCorner {
+    border-bottom-right-radius: 50%;
+}
+
+.warning {
+    background-color: red;
+}
+
+.button {
+    display: inline-block;
+    padding: 0%;
+    margin: 0%;
+    border: 1px solid black;
+}
+
+.button:not(.pressedButton) {
+    background-color: #dddddd;                                
+}
+.button:hover:not(.pressedButton) {
+    background-color: white;
+}
+
+.pressedButton {
+    background-color: black;
+    color: white;
+}
+
+#potentialGameSpace {
+    width: 95%;
+    height: 85%;
+    min-width: 400px;
+    min-height: 400px;
+    position: fixed;
+}
+
+#mineSweeperBoard {
+    margin: auto;
+    //bottom: 0;
+    //position: relative;
+}
+
+#controls {
+    min-height: 46px;        
+    min-width: 400px;        
+    height: 10%;
+    z-index: 3;
+    position: fixed;
+    background-color: white;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+#spacerForControls {
+    height: 15%;
+    min-height: 50px;
+}
+
+body {
+    background-color: black;
+}
+
+img.boardImg {
+    height: 90%;
+    position: absolute;
+}
+
+img.flag {
+    left: 30%;
+    top: 5%;
+}
+
+img.mine {
+    left: 5%;
+    top: 5%;
+}
+
+img.squareImg {
+    left: 5%;
+    top: 5%;
+}
+
+#newGameSettings {
+    position: fixed;
+    min-width: 300px;
+    min-height: 300px;
+    width: 40%;
+    height: 40%;
+    border: 3px solid #888888;
+    background-color: white;
+    padding: 5%;
+    text-align: center;
+    z-index: 2;
+    top: 25%;
+    left: 25%;
+}
+
+.iconButton {
+    height: 90%;
+    min-height: 40px;
+    position: relative;
+}
+
+#fullHeightContainer {
+    position: relative;
+    margin: 0px;    
+    margin-bottom: 0px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid green;
+}

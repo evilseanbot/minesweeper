@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="minesweeper.css" />
+        <script src="jquery-1.10.2.min.js"></script>    	
+	    <script src="minesweeper.js"></script>
+    </head>
+    <body>
+        <!-- <div id='fullHeightContainer'> -->
+            <!-- <div id='spacerForControls'></div> -->
+            <div id='mineSweeperBoard'></div>
+        <!-- </div> -->
+        <div id='newGameSettings'>
+            Height: <input type='text' id='boardHeight' value='8'/><br>
+            Width: <input type='text' id='boardWidth' value='8'/><br>
+            Mines: <input type='text' id='numOfMines' value='10'/><br>            
+            <div id='startGame' class='button'>Start Game</div>
+        </div>                    
+        <div id='controls'>
+            <div id='newGameMenu' class='button'>New</div>
+            <div id='validate' class='button'>Validate</div>
+            <div id='cheat' class='button'>Cheat</div>
+            <div id='explore' class='button iconButton'><img src='magGlass.png' class='boardImg squareImg' />&nbsp;</div>              
+            <div id='flag' class='button iconButton'><img src='redFlag.png' class='boardImg flag' />&nbsp;</div>
+        </div>
+        <div id='potentialGameSpace'></div>
+    </body>
+</html>

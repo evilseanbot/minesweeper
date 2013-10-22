@@ -1,0 +1,56 @@
+FEATURES:
+* Squares expand for entire screen, but remain square.
+
+
+CHECKLIST:
+PRODUCT:
+* Does it work well when resizing the screen?
+* How does it work on mobile?
+* How does it look on browsershots?
+* Does it display a sensical message if Javascript is disabled?
+
+CODE:
+* Am I repeating myself anywhere in the code? Can I remove that?
+* Can I make it more testable?
+* Are there any delays introudced by the program?
+   If so:
+   * Can I make the algorithms faster (Think Big O)
+* Can I make this easier to maintain/extend?
+
+    CODE READIBILITY
+    * Is everything named logically and consistantly? Could I name things better?
+    * Imagine that you are giving this to a programming novice to play around with. How would you comment it then?
+    * Are my programming choices the easiest to follow that I could make?    
+
+TO DO:
+* delagging
+* Better win screen
+* Better lose screen
+* Code review
+
+QUESTIONS:
+* Whats a good way to store information on click handlers within a grid? Is storing coordinates in the ID acceptable?
+
+SIZING:
+
+The top bar floats above the other elements.
+If the window size is less than 460 pixels tall, than the top bar is 46 pixels tall.
+If the window size is more than 460 pixels tall, than the top bar is 10% of the screen resolution.
+The text in the top bar is at an appropiate size for the top bar. 
+The top bar includes the functions: New Game, Validate, Cheat and the actions: Explore and Flag.
+
+The bottom half can be scrolled up so that all of the fields are below the top bar.
+
+The fields shrink to fit all into the window until they are 46 pixels tall and wide.
+If the mines have to shrink more be displayed at once, the minefield is expanded more than the screen.
+
+==============================================
+
+Looks fine on:
+
+* Chrome
+* Firefox 
+* I.E
+
+
+IDEA: See how far you can get when you don't worry about mobile.

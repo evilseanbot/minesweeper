@@ -1,0 +1,51 @@
+</html>
+    </head>
+        <script src="jquery-1.10.2.min.js"></script>
+    	<!--- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
+	    <script src="minesweeper.js"></script>
+	    <script>
+            function runTest(testDesc, test) {
+            	document.write("<p>"+testDesc+": ");
+            	if (test) {
+            		document.write("PASSED");
+            	} else {
+            		document.write("FAILED");
+            	}
+            }
+
+	        var MSBoard = {};
+            MSBoard = createBoardModel(8, 8);
+            createBoardView();
+
+            document.write("<h3>createBoardModel function</h3>");
+            runTest("createBoardModel created an object that has squares", (typeof MSBoard.squares !== 'undefined'));
+            runTest("createBoardModel's squares array has 8 units in the x dimension when 8 is passed in the first parameter", (MSBoard.squares.length == 8));
+
+            MSBoard = createBoardModel(10, 4);
+            createBoardView();
+
+            runTest("createBoardModel's squares array has 4 units in the y dimension when 4 is passed in the second parameter", (MSBoard.squares[0].length == 4));
+
+            MSBoard = createBoardModel(8, 8);
+            createBoardView();
+            var ns = getNearbySquares(3, 3)
+
+            document.write("<h3>getNearbySquares function</h3>");
+
+            runTest("getNearbySquares(3,3) returns an object with startX of 2 and endX of 4.", (ns.startX == 2 && ns.endX == 4));
+            runTest("getNearbySquares(3,3) returns an object with startY of 2 and endY of 4.", (ns.startY == 2 && ns.endY == 4));
+
+            document.write("<h3>getX and getY functions</h3>");
+
+            runTest("getX('2-4') returns 2.", (getX('2-4') == 2));
+            runTest("getY('2-4') returns 4.", (getY('2-4') == 4)); 
+            
+	    </script>
+    </head>
+    <body>
+        <div id='game'></div>
+            <div id='newGame'></div>
+        	<div id='mineSweeperBoard'></div>
+        </div>
+    </body>
+</html>
