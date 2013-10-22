@@ -112,3 +112,8 @@ div#newGameSettings {
     top: 25%;
     left: 25%;
 }
+
+div#attributions {
+    color: #888888;
+    text-align: center;
+}
